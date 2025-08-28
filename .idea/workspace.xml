@@ -4,16 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sun.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pag/infer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pag/model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pag/train.py" afterDir="false" />
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="first transformer pag core + pag hooks">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/arena.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asc/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asc/core.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modulation/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modulation/functions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pag/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_asc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_integration.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_modulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pag/infer.py" beforeDir="false" afterPath="$PROJECT_DIR$/infer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pag/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/pag/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pag/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,9 +37,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "gurkebaui"
+  }
 }]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/gurkebaui/sun.git",
+    "accountId": "15392801-4093-4922-a68e-254dad1c59f5"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="31rwDz0CPpxeqg3ohqrwgqzgZty" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -42,15 +61,58 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Python tests.Python tests in Uni-Tests.py.executor": "Run",
+    "Python tests.Python tests in setter.py.executor": "Run",
+    "Python tests.Python tests in test_asc.py.executor": "Run",
+    "Python.affective_state_core.executor": "Run",
+    "Python.core.executor": "Debug",
     "Python.infer.executor": "Run",
     "Python.model.executor": "Run",
+    "Python.setter.executor": "Run",
     "Python.train.executor": "Run",
+    "Python.unittest.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Henry\Documents\sun\pag" />
+      <recent name="C:\Users\Henry\Documents\sun" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="core" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="sun" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/asc" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/asc/core.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.core" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -67,6 +129,30 @@
       <option name="presentableId" value="Default" />
       <updated>1756295383227</updated>
     </task>
+    <task id="LOCAL-00001" summary="first transformer pag core + pag hooks">
+      <option name="closed" value="true" />
+      <created>1756370332321</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1756370332321</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first transformer pag core + pag hooks" />
+    <option name="LAST_COMMIT_MESSAGE" value="first transformer pag core + pag hooks" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
