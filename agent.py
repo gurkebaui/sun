@@ -8,23 +8,37 @@ from modulation.functions import (
     calculate_layer_drop_rate
 )
 
+from swhor.regulator import SWHoR
+
 
 class CAPA_Agent:
     """
-    Der Haupt-Controller, der alle Kernkomponenten (PAG, ASC, Modulation)
-    integriert und steuert.
-    """
-
+       Der Haupt-Controller, der alle Kernkomponenten (PAG, ASC, Modulation)
+       integriert und steuert.
+       """
     def __init__(self, pag_model: PAG_Model, asc: AffectiveStateCore):
-        """
-        Initialisiert den Agenten mit den erforderlichen Modulen.
-
-        Args:
-            pag_model (PAG_Model): Das trainierte "Gehirn" des Agenten.
-            asc (AffectiveStateCore): Die "emotionale" Steuereinheit.
-        """
         self.pag = pag_model
         self.asc = asc
+        self.swhor = SWHoR()  # NEU: SWHoR-Instanz halten
+
+    # NEU: Haupt-Update-Schleife des Agenten
+    def update(self):
+        """
+        Führt einen Simulationsschritt für alle internen Systeme aus.
+        Wird durch den 'tick'-Befehl in der Arena aufgerufen.
+        """
+        # 1. SWHoR mit dem aktuellen Zustand aktualisieren
+        current_state = self.asc.get_state()
+        swhor_deltas = self.swhor.update(current_state['x'])
+
+        # 2. Die vom SWHoR berechneten Änderungen auf das ASC anwenden
+        self.asc.update_state(
+            delta_x=swhor_deltas['delta_x'],
+            delta_y=swhor_deltas['delta_y']
+        )
+
+
+
 
     def run_inference(self, input_sequence: torch.Tensor) -> torch.Tensor:
         """

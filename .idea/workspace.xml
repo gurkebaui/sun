@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="arena finished und alle tests gut also kann jetzt temp usw mit x verändern und y macht nur temp (wird später noch refined)" />
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="workthing">
+      <change afterPath="$PROJECT_DIR$/swhor/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/swhor/regulator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_swhor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arena.py" beforeDir="false" afterPath="$PROJECT_DIR$/arena.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pag/pag_model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/pag/pag_model.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,18 +34,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "gurkebaui"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;gurkebaui&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/gurkebaui/sun.git",
-    "accountId": "15392801-4093-4922-a68e-254dad1c59f5"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/gurkebaui/sun.git&quot;,
+    &quot;accountId&quot;: &quot;15392801-4093-4922-a68e-254dad1c59f5&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -52,8 +61,12 @@
     "Python tests.Python tests in Uni-Tests.py.executor": "Run",
     "Python tests.Python tests in setter.py.executor": "Run",
     "Python tests.Python tests in test_asc.py.executor": "Run",
+    "Python tests.Python tests in test_swhor.py.executor": "Run",
     "Python.affective_state_core.executor": "Run",
-    "Python.core.executor": "Debug",
+    "Python.agent.executor": "Run",
+    "Python.arena.executor": "Run",
+    "Python.core.executor": "Run",
+    "Python.functions.executor": "Run",
     "Python.infer.executor": "Run",
     "Python.model.executor": "Run",
     "Python.setter.executor": "Run",
@@ -149,13 +162,22 @@
       <option name="project" value="LOCAL" />
       <updated>1756390560775</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="workthing">
+      <option name="closed" value="true" />
+      <created>1756390640874</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1756390640874</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first transformer pag core + pag hooks" />
     <MESSAGE value="arena finished und alle tests gut also kann jetzt temp usw mit x verändern und y macht nur temp (wird später noch refined)" />
-    <option name="LAST_COMMIT_MESSAGE" value="arena finished und alle tests gut also kann jetzt temp usw mit x verändern und y macht nur temp (wird später noch refined)" />
+    <MESSAGE value="workthing" />
+    <option name="LAST_COMMIT_MESSAGE" value="workthing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

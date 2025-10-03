@@ -29,6 +29,7 @@ def print_help():
     print("  punish <wert>           : Verringert die Valenz (y) um einen Wert (Bestrafung).")
     print("  stress <wert>           : Erhöht das Arousal (x) um einen Wert (Stress/Fokus).")
     print("  calm <wert>             : Verringert das Arousal (x) um einen Wert (Entspannung).")
+    print("  tick <n>                : Simuliert <n> Zeitschritte für interne Systeme (z.B. Schlaf).")
     print("  help                    : Zeigt diese Hilfe an.")
     print("  exit                    : Beendet die Arena.")
     print("--------------------------\n")
@@ -70,7 +71,27 @@ def main():
 
             elif command == "status":
                 state = agent.asc.get_state()
+                pressure = agent.swhor.sleep_pressure
+                sleeping_status = "Schlafend" if agent.swhor.is_sleeping else "Wach"
                 print(f"ASC State: {{'x': {state['x']:.2f}, 'y': {state['y']:.2f}}}")
+                print(f"SWHoR Status: Schlafdruck: {pressure:.2f} | Zustand: {sleeping_status}")
+
+            elif command == "tick":
+                if not args:
+                    print("Fehler: Bitte geben Sie die Anzahl der Ticks an (z.B. tick 10).")
+                    continue
+                num_ticks = int(args[0])
+                for i in range(num_ticks):
+                    agent.update()
+                print(f"{num_ticks} Ticks simuliert. Aktueller Status:")
+                # Rufe den 'status'-Befehlscode erneut auf, um den Endzustand anzuzeigen
+                state = agent.asc.get_state()
+                pressure = agent.swhor.sleep_pressure
+                sleeping_status = "Schlafend" if agent.swhor.is_sleeping else "Wach"
+                print(f"ASC State: {{'x': {state['x']:.2f}, 'y': {state['y']:.2f}}}")
+                print(f"SWHoR Status: Schlafdruck: {pressure:.2f} | Zustand: {sleeping_status}")
+
+
 
             elif command == "infer":
                 if not args:
