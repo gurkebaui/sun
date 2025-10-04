@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="tests have been updatedd (again) now they should work properley(somewhat at least)" />
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="memory added tho tests are failinng will fix requirememts now" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -196,7 +196,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759608511952</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="memory added tho tests are failinng will fix requirememts now">
+      <option name="closed" value="true" />
+      <created>1759608863934</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1759608863934</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -207,7 +215,8 @@
     <MESSAGE value="sleep has been upddated and improved" />
     <MESSAGE value="ai model added (googles flan-5 oderso) and the unittests have been updated" />
     <MESSAGE value="tests have been updatedd (again) now they should work properley(somewhat at least)" />
-    <option name="LAST_COMMIT_MESSAGE" value="tests have been updatedd (again) now they should work properley(somewhat at least)" />
+    <MESSAGE value="memory added tho tests are failinng will fix requirememts now" />
+    <option name="LAST_COMMIT_MESSAGE" value="memory added tho tests are failinng will fix requirememts now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
