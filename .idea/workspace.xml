@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="requirements.txt added and updated to now work propperly">
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="memory funktioniert jetzt richtig alle tests positiv (finally bro)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/memory/subsystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/memory/subsystem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_memory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_pag_upgrade.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_pag_upgrade.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arena.py" beforeDir="false" afterPath="$PROJECT_DIR$/arena.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pag/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/pag/model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -218,8 +218,27 @@
       <option name="project" value="LOCAL" />
       <updated>1759608962974</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="memory funktioniert jetzt richtig alle tests positiv (finally bro)">
+      <option name="closed" value="true" />
+      <created>1759609791583</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1759609791583</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first transformer pag core + pag hooks" />
@@ -231,7 +250,8 @@
     <MESSAGE value="tests have been updatedd (again) now they should work properley(somewhat at least)" />
     <MESSAGE value="memory added tho tests are failinng will fix requirememts now" />
     <MESSAGE value="requirements.txt added and updated to now work propperly" />
-    <option name="LAST_COMMIT_MESSAGE" value="requirements.txt added and updated to now work propperly" />
+    <MESSAGE value="memory funktioniert jetzt richtig alle tests positiv (finally bro)" />
+    <option name="LAST_COMMIT_MESSAGE" value="memory funktioniert jetzt richtig alle tests positiv (finally bro)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,17 +1,16 @@
 # arena.py
 import torch
 import sys
+import argparse
 
-# Füge das aktuelle Verzeichnis zum Python-Pfad hinzu, um lokale Module zu finden
-# Dies ist nicht immer notwendig, stellt aber die Kompatibilität sicher.
+# Stellen Sie sicher, dass die Haupt-Module importiert werden können
 sys.path.append('.')
 
 from agent import CAPA_Agent
 from pag.model import PAG_Model
 from asc.core import AffectiveStateCore
 
-# --- Modell-Hyperparameter (müssen mit dem Training übereinstimmen) ---
-# Diese werden benötigt, um eine Instanz des PAG_Model zu erstellen.
+# --- Modell-Hyperparameter (nur für die Initialisierung benötigt) ---
 VOCAB_SIZE = 50
 D_MODEL = 128
 NHEAD = 4
@@ -22,140 +21,140 @@ DIM_FEEDFORWARD = 512
 
 def print_help():
     """Zeigt eine formatierte Liste aller verfügbaren Befehle an."""
-    print("\n--- CAPA Arena Befehle ---")
-    print("  status                  : Zeigt den aktuellen [x,y] Zustand des ASC an.")
-    print("  infer <seq>             : Führt eine Inferenz mit einer Zahlenfolge aus (z.B. infer 1 2 3).")
-    print("  reward <wert>           : Erhöht die Valenz (y) um einen Wert (Belohnung).")
-    print("  punish <wert>           : Verringert die Valenz (y) um einen Wert (Bestrafung).")
-    print("  stress <wert>           : Erhöht das Arousal (x) um einen Wert (Stress/Fokus).")
-    print("  calm <wert>             : Verringert das Arousal (x) um einen Wert (Entspannung).")
-    print("  tick <n>                : Simuliert <n> Zeitschritte für interne Systeme (z.B. Schlaf).")
-    print("  stimulus <intensität>   : Simuliert einen externen Reiz mit einer Intensität.")
+    print("\n" + "=" * 25 + " CAPA Arena Befehle " + "=" * 25)
+    print("  status                  : Zeigt den aktuellen Zustand des Agenten an.")
+    print("  tick <n>                : Simuliert <n> Zeitschritte für interne Systeme.")
+    print("  add_mem <text>          : Fügt eine manuelle Erinnerung hinzu.")
+    print("  infer [--verbose] <text>: Startet den Gedankenprozess mit einem Text-Input.")
+    print("  reward <wert>           : Erhöht die Valenz (y) um einen Wert.")
+    print("  punish <wert>           : Verringert die Valenz (y) um einen Wert.")
+    print("  stress <wert>           : Erhöht das Arousal (x) um einen Wert.")
+    print("  calm <wert>             : Verringert das Arousal (x) um einen Wert.")
     print("  help                    : Zeigt diese Hilfe an.")
     print("  exit                    : Beendet die Arena.")
-    print("--------------------------\n")
+    print("=" * 72 + "\n")
 
 
 def main():
     """
     Die Hauptfunktion der Arena. Initialisiert den Agenten und startet die
-    interaktive Befehlsschleife.
+    interaktive Befehlsschleife mit argparse.
     """
     print("Initialisiere CAPA Agent...")
-    # 1. Instanziiere die Kernkomponenten
-    pag = PAG_Model(VOCAB_SIZE, D_MODEL, NHEAD, NUM_ENCODER_LAYERS, NUM_DECODER_LAYERS, DIM_FEEDFORWARD)
-    # HINWEIS: Das PAG-Modell ist untrainiert, aber das ist für die Demonstration
-    # der Systemmechanik ausreichend.
+    pag = PAG_Model()
     asc = AffectiveStateCore()
     agent = CAPA_Agent(pag_model=pag, asc=asc)
+
+    # Argument-Parser für eine saubere Befehlsverarbeitung
+    parser = argparse.ArgumentParser(description="CAPA Arena CLI", add_help=False)
+    subparsers = parser.add_subparsers(dest="command", help="Verfügbare Befehle")
+
+    # Befehl: status
+    subparsers.add_parser("status", help="Zeigt den aktuellen Zustand des Agenten an.")
+
+    # Befehl: tick
+    tick_parser = subparsers.add_parser("tick", help="Simuliert n Zeitschritte.")
+    tick_parser.add_argument("num_ticks", type=int, help="Die Anzahl der zu simulierenden Ticks.")
+
+    # Befehl: reward
+    reward_parser = subparsers.add_parser("reward", help="Erhöht die Valenz (y).")
+    reward_parser.add_argument("value", type=float, help="Der Wert, um den die Valenz erhöht wird.")
+
+    # Befehl: punish
+    punish_parser = subparsers.add_parser("punish", help="Verringert die Valenz (y).")
+    punish_parser.add_argument("value", type=float, help="Der Wert, um den die Valenz verringert wird.")
+
+    # Befehl: stress
+    stress_parser = subparsers.add_parser("stress", help="Erhöht das Arousal (x).")
+    stress_parser.add_argument("value", type=float, help="Der Wert, um den das Arousal erhöht wird.")
+
+    # Befehl: calm
+    calm_parser = subparsers.add_parser("calm", help="Verringert das Arousal (x).")
+    calm_parser.add_argument("value", type=float, help="Der Wert, um den das Arousal verringert wird.")
+
+    # Befehl: add_mem
+    mem_parser = subparsers.add_parser("add_mem", help="Fügt eine manuelle Erinnerung hinzu.")
+    mem_parser.add_argument("text", nargs='+', help="Der Text der Erinnerung.")
+
+    # Befehl: infer
+    infer_parser = subparsers.add_parser("infer", help="Startet den bewussten Gedankenprozess.")
+    infer_parser.add_argument("--verbose", "-v", action="store_true",
+                              help="Zeigt den vollständigen Prompt vor der Antwort an.")
+    infer_parser.add_argument("text", nargs='+', help="Der Text, der die aktuelle Situation beschreibt.")
+
+    # Befehl: help & exit
+    subparsers.add_parser("help", help="Zeigt die Hilfe an.")
+    subparsers.add_parser("exit", help="Beendet die Anwendung.")
 
     print("CAPA Arena initialisiert. Agent ist bereit.")
     print("Geben Sie 'help' ein, um eine Liste der Befehle zu sehen.")
 
-    # 2. Starte die Endlosschleife für Benutzereingaben
     while True:
         try:
-            user_input = input("> ").strip().lower()
+            user_input = input("> ").strip()
             if not user_input:
                 continue
 
-            parts = user_input.split()
-            command = parts[0]
-            args = parts[1:]
+            try:
+                # Parse die Argumente aus dem User-Input
+                args = parser.parse_args(user_input.split())
+            except SystemExit:
+                # argparse beendet standardmäßig das Programm bei Fehlern oder -h.
+                # Wir fangen das ab, damit die Schleife weiterläuft.
+                continue
 
-            if command == "exit":
+            if args.command == "exit":
                 print("Fahre die Arena herunter. Auf Wiedersehen.")
                 break
 
-            elif command == "help":
+            elif args.command == "help":
                 print_help()
 
-            elif command == "status":
+            elif args.command == "status":
                 state = agent.asc.get_state()
                 pressure = agent.swhor.sleep_pressure
                 sleeping_status = "Schlafend" if agent.swhor.is_sleeping else "Wach"
                 print(f"ASC State: {{'x': {state['x']:.2f}, 'y': {state['y']:.2f}}}")
                 print(f"SWHoR Status: Schlafdruck: {pressure:.2f} | Zustand: {sleeping_status}")
+                print(f"Memory Status: {agent.memory.get_memory_count()} Erinnerungen gespeichert.")
 
-            elif command == "tick":
-                if not args:
-                    print("Fehler: Bitte geben Sie die Anzahl der Ticks an (z.B. tick 10).")
-                    continue
-                num_ticks = int(args[0])
-                for i in range(num_ticks):
+            elif args.command == "tick":
+                for _ in range(args.num_ticks):
                     agent.update()
-                print(f"{num_ticks} Ticks simuliert. Aktueller Status:")
-                # Rufe den 'status'-Befehlscode erneut auf, um den Endzustand anzuzeigen
-                state = agent.asc.get_state()
-                pressure = agent.swhor.sleep_pressure
-                sleeping_status = "Schlafend" if agent.swhor.is_sleeping else "Wach"
-                print(f"ASC State: {{'x': {state['x']:.2f}, 'y': {state['y']:.2f}}}")
-                print(f"SWHoR Status: Schlafdruck: {pressure:.2f} | Zustand: {sleeping_status}")
+                print(f"{args.num_ticks} Ticks simuliert.")
 
-            elif command == "stimulus":
-                if len(args) != 1:
-                    print("Fehler: Bitte geben Sie genau einen Wert für die Intensität an.")
-                    continue
-                intensity = float(args[0])
-                stimulus_dict = {'type': 'sound', 'intensity': intensity}
-                agent.handle_stimulus(stimulus_dict)
+            elif args.command == "reward":
+                agent.asc.update_state(delta_y=args.value)
+                print(f"Valenz (y) um {args.value:.2f} erhöht.")
 
+            elif args.command == "punish":
+                agent.asc.update_state(delta_y=-args.value)
+                print(f"Valenz (y) um {args.value:.2f} verringert.")
 
-            elif command == "infer":
+            elif args.command == "stress":
+                agent.asc.update_state(delta_x=args.value)
+                print(f"Arousal (x) um {args.value:.2f} erhöht.")
 
-                if not args:
-                    print("Fehler: Bitte geben Sie einen Text-Prompt an (z.B. infer Fasse diesen Satz zusammen: ...).")
+            elif args.command == "calm":
+                agent.asc.update_state(delta_x=-args.value)
+                print(f"Arousal (x) um {args.value:.2f} verringert.")
 
-                    continue
+            elif args.command == "add_mem":
+                text = " ".join(args.text)
+                current_state = agent.asc.get_state()
+                agent.memory.add_experience(text, metadata=current_state)
 
-                # Fasse alle Wörter nach 'infer' zu einem einzigen String zusammen
+            elif args.command == "infer":
+                situation_text = " ".join(args.text)
+                final_answer, full_prompt = agent.run_inference_cycle(situation_text)
 
-                prompt = " ".join(args)
+                if args.verbose:
+                    print("\n" + "=" * 20 + " DEBUG: VOLLSTÄNDIGER PROMPT " + "=" * 20)
+                    print(full_prompt)
+                    print("=" * 66 + "\n")
 
-                # Rufe die aktualisierte Methode des Agenten auf
+                print(f"Agent > {final_answer}")
 
-                output_text = agent.run_inference(prompt)
-
-                print(f"Agent > {output_text}")
-
-            elif command == "reward":
-                if len(args) != 1:
-                    print("Fehler: Bitte geben Sie genau einen Wert an (z.B. reward 25.5).")
-                    continue
-                value = float(args[0])
-                agent.asc.update_state(delta_y=value)
-                print(f"Valenz (y) um {value:.2f} erhöht.")
-
-            elif command == "punish":
-                if len(args) != 1:
-                    print("Fehler: Bitte geben Sie genau einen Wert an (z.B. punish 30).")
-                    continue
-                value = float(args[0])
-                agent.asc.update_state(delta_y=-value)  # Wende den Wert als negativ an
-                print(f"Valenz (y) um {value:.2f} verringert.")
-
-            elif command == "stress":
-                if len(args) != 1:
-                    print("Fehler: Bitte geben Sie genau einen Wert an (z.B. stress 20).")
-                    continue
-                value = float(args[0])
-                agent.asc.update_state(delta_x=value)
-                print(f"Arousal (x) um {value:.2f} erhöht.")
-
-
-            elif command == "calm":
-                if len(args) != 1:
-                    print("Fehler: Bitte geben Sie genau einen Wert an (z.B. calm 15).")
-                    continue
-                value = float(args[0])
-                agent.asc.update_state(delta_x=-value)  # Wende den Wert als negativ an
-                print(f"Arousal (x) um {value:.2f} verringert.")
-
-            else:
-                print(f"Fehler: Unbekannter Befehl '{command}'. Geben Sie 'help' für eine Liste der Befehle ein.")
-
-        except ValueError:
-            print("Fehler: Ungültige Eingabe. Bitte geben Sie für Werte eine gültige Zahl an.")
         except Exception as e:
             print(f"Ein unerwarteter Fehler ist aufgetreten: {e}")
 
