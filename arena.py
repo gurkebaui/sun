@@ -30,6 +30,8 @@ def print_help():
     print("  punish <wert>           : Verringert die Valenz (y) um einen Wert.")
     print("  stress <wert>           : Erhöht das Arousal (x) um einen Wert.")
     print("  calm <wert>             : Verringert das Arousal (x) um einen Wert.")
+    print("  buffer                  : Zeigt den Inhalt des Kurzzeitgedächtnis-Puffers an.")
+    print("  view_mem [--latest <n>] : Zeigt die <n> neuesten Erinnerungen an.")
     print("  help                    : Zeigt diese Hilfe an.")
     print("  exit                    : Beendet die Arena.")
     print("=" * 72 + "\n")
@@ -75,6 +77,10 @@ def main():
     # Befehl: add_mem
     mem_parser = subparsers.add_parser("add_mem", help="Fügt eine manuelle Erinnerung hinzu.")
     mem_parser.add_argument("text", nargs='+', help="Der Text der Erinnerung.")
+
+    subparsers.add_parser("buffer", help="Zeigt den Inhalt des Kurzzeitgedächtnisses an.")
+    view_mem_parser = subparsers.add_parser("view_mem", help="Zeigt Erinnerungen aus dem Langzeitgedächtnis an.")
+    view_mem_parser.add_argument("--latest", type=int, nargs='?', const=1, default=None, help="Zeigt die n neuesten Erinnerungen an (Standard: 1).")
 
     # Befehl: infer
     infer_parser = subparsers.add_parser("infer", help="Startet den bewussten Gedankenprozess.")
@@ -143,6 +149,24 @@ def main():
                 text = " ".join(args.text)
                 current_state = agent.asc.get_state()
                 agent.memory.add_experience(text, metadata=current_state)
+
+            elif args.command == "buffer":
+                print(f"--- Kurzzeitgedächtnis ({len(agent.experience_buffer)} Einträge) ---")
+                if not agent.experience_buffer:
+                    print("Puffer ist leer.")
+                for i, exp in enumerate(agent.experience_buffer):
+                    print(f"{i + 1}: {exp['text']}")
+                print("-" * 20)
+
+            elif args.command == "view_mem":
+                if args.latest is not None:
+                    print(f"--- Die {args.latest} neuesten Erinnerungen ---")
+                    memories = agent.memory.get_latest_memories(n_results=args.latest)
+                    if not memories:
+                        print("Keine Erinnerungen gefunden.")
+                    for i, mem in enumerate(memories):
+                        print(f"Neueste-{i}: {mem['text']} | Meta: {mem['metadata']}")
+                    print("-" * 20)
 
             elif args.command == "infer":
                 situation_text = " ".join(args.text)
