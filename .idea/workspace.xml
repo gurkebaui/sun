@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="ai model added (googles flan-5 oderso) and the unittests have been updated" />
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="tests have been updatedd (again) now they should work properley(somewhat at least)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -188,7 +188,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759606274164</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="tests have been updatedd (again) now they should work properley(somewhat at least)">
+      <option name="closed" value="true" />
+      <created>1759608511952</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1759608511952</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -198,7 +206,8 @@
     <MESSAGE value="sleep has been implemented and major sleep bugs already fixed tho there may be more" />
     <MESSAGE value="sleep has been upddated and improved" />
     <MESSAGE value="ai model added (googles flan-5 oderso) and the unittests have been updated" />
-    <option name="LAST_COMMIT_MESSAGE" value="ai model added (googles flan-5 oderso) and the unittests have been updated" />
+    <MESSAGE value="tests have been updatedd (again) now they should work properley(somewhat at least)" />
+    <option name="LAST_COMMIT_MESSAGE" value="tests have been updatedd (again) now they should work properley(somewhat at least)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
