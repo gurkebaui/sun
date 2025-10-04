@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="workthing">
-      <change afterPath="$PROJECT_DIR$/swhor/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/swhor/regulator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_swhor.py" afterDir="false" />
+    <list default="true" id="1d1bab7a-1080-48a0-9ee2-957f714a1ade" name="Changes" comment="sleep has been implemented and major sleep bugs already fixed tho there may be more">
+      <change afterPath="$PROJECT_DIR$/vigilance/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vigilance/subsystem.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/arena.py" beforeDir="false" afterPath="$PROJECT_DIR$/arena.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pag/pag_model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/pag/pag_model.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swhor/regulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/swhor/regulator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,30 +53,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python tests.Python tests in Uni-Tests.py.executor": "Run",
-    "Python tests.Python tests in setter.py.executor": "Run",
-    "Python tests.Python tests in test_asc.py.executor": "Run",
-    "Python tests.Python tests in test_swhor.py.executor": "Run",
-    "Python.affective_state_core.executor": "Run",
-    "Python.agent.executor": "Run",
-    "Python.arena.executor": "Run",
-    "Python.core.executor": "Run",
-    "Python.functions.executor": "Run",
-    "Python.infer.executor": "Run",
-    "Python.model.executor": "Run",
-    "Python.setter.executor": "Run",
-    "Python.train.executor": "Run",
-    "Python.unittest.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in Uni-Tests.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in setter.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_asc.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_swhor.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.affective_state_core.executor&quot;: &quot;Run&quot;,
+    &quot;Python.agent.executor&quot;: &quot;Run&quot;,
+    &quot;Python.arena.executor&quot;: &quot;Run&quot;,
+    &quot;Python.core.executor&quot;: &quot;Run&quot;,
+    &quot;Python.functions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.infer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.setter.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train.executor&quot;: &quot;Run&quot;,
+    &quot;Python.unittest.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Henry\Documents\sun\pag" />
@@ -170,14 +168,23 @@
       <option name="project" value="LOCAL" />
       <updated>1756390640874</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="sleep has been implemented and major sleep bugs already fixed tho there may be more">
+      <option name="closed" value="true" />
+      <created>1759512980409</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1759512980409</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first transformer pag core + pag hooks" />
     <MESSAGE value="arena finished und alle tests gut also kann jetzt temp usw mit x verändern und y macht nur temp (wird später noch refined)" />
     <MESSAGE value="workthing" />
-    <option name="LAST_COMMIT_MESSAGE" value="workthing" />
+    <MESSAGE value="sleep has been implemented and major sleep bugs already fixed tho there may be more" />
+    <option name="LAST_COMMIT_MESSAGE" value="sleep has been implemented and major sleep bugs already fixed tho there may be more" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

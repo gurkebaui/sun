@@ -9,6 +9,7 @@ from modulation.functions import (
 )
 
 from swhor.regulator import SWHoR
+from vigilance.subsystem import VigilanceSubsystem
 
 
 class CAPA_Agent:
@@ -16,29 +17,56 @@ class CAPA_Agent:
        Der Haupt-Controller, der alle Kernkomponenten (PAG, ASC, Modulation)
        integriert und steuert.
        """
+
     def __init__(self, pag_model: PAG_Model, asc: AffectiveStateCore):
         self.pag = pag_model
         self.asc = asc
-        self.swhor = SWHoR()  # NEU: SWHoR-Instanz halten
+        self.swhor = SWHoR()
+        self.vigilance = VigilanceSubsystem()
 
-    # NEU: Haupt-Update-Schleife des Agenten
+        # NEU: Haupt-Update-Schleife des Agenten
+
     def update(self):
-        """
-        Führt einen Simulationsschritt für alle internen Systeme aus.
-        Wird durch den 'tick'-Befehl in der Arena aufgerufen.
-        """
-        # 1. SWHoR mit dem aktuellen Zustand aktualisieren
         current_state = self.asc.get_state()
-        swhor_deltas = self.swhor.update(current_state['x'])
+        # --- KORRIGIERTE PSSC-LOGIK ---
+        # 1. Prüfen, ob der Agent schlafen will (hoher Schlafdruck)
+        wants_to_sleep = self.swhor.sleep_pressure > self.swhor.PRESSURE_THRESHOLD
 
-        # 2. Die vom SWHoR berechneten Änderungen auf das ASC anwenden
+        # 2. Wenn er schlafen will, aber noch nicht schläft, den Sicherheitscheck durchführen
+        if wants_to_sleep and not self.swhor.is_sleeping:
+            is_safe = self.vigilance.is_safe_to_sleep(current_state['x'])
+            if is_safe:
+                # Es ist sicher -> Schlaf einleiten, indem x negativ gesetzt wird.
+                # Wir setzen x auf einen moderaten negativen Wert.
+                self.asc.set_state(x=-50, y=current_state['y'])
+                print("[Agent] Hoher Schlafdruck und sichere Umgebung. Leite Schlaf ein.")
+            else:
+                # Es ist nicht sicher -> wach bleiben und weiter leiden.
+                print("[Agent] Hoher Schlafdruck, aber Umgebung unsicher. Schlaf wird verhindert.")
+
+        # 3. Den SWHoR normal updaten lassen, der sich mit dem neuen Zustand synchronisiert.
+        # Der Zustand des ASC wird hier erneut abgerufen, falls er sich geändert hat.
+        swhor_deltas = self.swhor.update(self.asc.get_state()['x'])
         self.asc.update_state(
             delta_x=swhor_deltas['delta_x'],
             delta_y=swhor_deltas['delta_y']
         )
 
-
-
+    def handle_stimulus(self, stimulus: dict):
+        """
+        NEU: Verarbeitet einen externen Reiz und löst bei Bedarf
+        ein Not-Aufwachen aus.
+        """
+        print(f"Agent nimmt Reiz wahr: Intensität {stimulus.get('intensity', 0)}")
+        if self.swhor.is_sleeping:
+            is_danger = self.vigilance.filter_stimulus(stimulus)
+            if is_danger:
+                print("!!! ALARM: GEFAHR ERKANNT !!!")
+                # 1. Schlafprozess sofort abbrechen
+                self.swhor.interrupt_sleep()
+                # 2. ASC in posttraumatischen Zustand versetzen
+                self.asc.set_state(x=90, y=-80)
+                print("Agent in Alarmbereitschaft versetzt.")
 
     def run_inference(self, input_sequence: torch.Tensor) -> torch.Tensor:
         """

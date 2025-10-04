@@ -30,6 +30,7 @@ def print_help():
     print("  stress <wert>           : Erhöht das Arousal (x) um einen Wert (Stress/Fokus).")
     print("  calm <wert>             : Verringert das Arousal (x) um einen Wert (Entspannung).")
     print("  tick <n>                : Simuliert <n> Zeitschritte für interne Systeme (z.B. Schlaf).")
+    print("  stimulus <intensität>   : Simuliert einen externen Reiz mit einer Intensität.")
     print("  help                    : Zeigt diese Hilfe an.")
     print("  exit                    : Beendet die Arena.")
     print("--------------------------\n")
@@ -91,7 +92,13 @@ def main():
                 print(f"ASC State: {{'x': {state['x']:.2f}, 'y': {state['y']:.2f}}}")
                 print(f"SWHoR Status: Schlafdruck: {pressure:.2f} | Zustand: {sleeping_status}")
 
-
+            elif command == "stimulus":
+                if len(args) != 1:
+                    print("Fehler: Bitte geben Sie genau einen Wert für die Intensität an.")
+                    continue
+                intensity = float(args[0])
+                stimulus_dict = {'type': 'sound', 'intensity': intensity}
+                agent.handle_stimulus(stimulus_dict)
 
             elif command == "infer":
                 if not args:

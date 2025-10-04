@@ -39,7 +39,10 @@ class SWHoR:
 
         # Fall A: Agent wurde manuell schlafen gelegt
         if not self.is_sleeping and agent_is_currently_in_sleep_state:
-            self._on_sleep_start()
+            # Der Agent hat den Schlaf-Zustand bereits eingeleitet.
+            # SWHoR synchronisiert sich einfach damit.
+                self._on_sleep_start()
+
 
         # Fall B: Agent wurde manuell aufgeweckt
         elif self.is_sleeping and not agent_is_currently_in_sleep_state:
@@ -68,6 +71,16 @@ class SWHoR:
                 deltas['delta_y'] += self.FATIGUE_PENALTY
 
         return deltas
+
+    def interrupt_sleep(self):
+        """
+        NEU: Bricht den Schlafprozess sofort ab, ohne Belohnung/Bestrafung.
+        Wird vom Agenten bei einem Not-Aufwachen aufgerufen.
+        """
+        if self.is_sleeping:
+            print("[SWHoR] SCHLAF UNTERBROCHEN!")
+            self.is_sleeping = False
+            self.current_sleep_duration = 0  # Reset des Timers
 
     def _on_sleep_start(self):
         """Wird aufgerufen, wenn der Schlaf-Zustand beginnt."""
