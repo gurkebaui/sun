@@ -100,22 +100,23 @@ def main():
                 stimulus_dict = {'type': 'sound', 'intensity': intensity}
                 agent.handle_stimulus(stimulus_dict)
 
+
             elif command == "infer":
+
                 if not args:
-                    print("Fehler: Bitte geben Sie eine Zahlenfolge an (z.B. infer 1 2 3).")
+                    print("Fehler: Bitte geben Sie einen Text-Prompt an (z.B. infer Fasse diesen Satz zusammen: ...).")
+
                     continue
-                # Konvertiere die Eingabesequenz in Zahlen
-                seq = [int(num) for num in args]
-                # Füge SOS/EOS-Tokens hinzu und erstelle einen Tensor
-                input_tensor = torch.tensor([agent.pag.sos_token] + seq + [agent.pag.eos_token])
 
-                output_tensor = agent.run_inference(input_tensor)
+                # Fasse alle Wörter nach 'infer' zu einem einzigen String zusammen
 
-                # Dekodiere das Ergebnis für die Anzeige
-                output_seq = [
-                    item.item() for item in output_tensor[1:] if item.item() != agent.pag.eos_token
-                ]
-                print(f"Agent > {' '.join(map(str, output_seq))}")
+                prompt = " ".join(args)
+
+                # Rufe die aktualisierte Methode des Agenten auf
+
+                output_text = agent.run_inference(prompt)
+
+                print(f"Agent > {output_text}")
 
             elif command == "reward":
                 if len(args) != 1:

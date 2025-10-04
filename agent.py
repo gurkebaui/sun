@@ -68,35 +68,23 @@ class CAPA_Agent:
                 self.asc.set_state(x=90, y=-80)
                 print("Agent in Alarmbereitschaft versetzt.")
 
-    def run_inference(self, input_sequence: torch.Tensor) -> torch.Tensor:
+    def run_inference(self, prompt: str) -> str:  # Signatur von Tensor zu String geändert
         """
         Führt eine Inferenz aus, die durch den aktuellen Zustand des ASC
         moduliert wird.
-
-        Args:
-            input_sequence (torch.Tensor): Der Eingabe-Tensor für den PAG.
-
-        Returns:
-            torch.Tensor: Der Ausgabe-Tensor vom PAG.
         """
-        # 1. Aktuellen Zustand vom ASC abrufen
         current_state = self.asc.get_state()
         x, y = current_state['x'], current_state['y']
 
-        # 2. Modulationsfunktionen aufrufen, um dynamische Hyperparameter zu berechnen
-        temp = modulate_temperature(x, y)  # Übergebe jetzt x und y
-        attn_func = lambda scores: modulate_attention_scores(x, scores)
-        drop_rate = calculate_layer_drop_rate(x)
+        # Berechne die Temperatur basierend auf dem ASC-Zustand
+        temp = modulate_temperature(x, y)
 
-        print(f"Running inference with ASC state [x={x:.2f}, y={y:.2f}] -> "
-              f"temp={temp:.2f}, drop_rate={drop_rate:.2f}")
+        print(f"Running inference with ASC state [x={x:.2f}, y={y:.2f}] -> temp={temp:.2f}")
 
-        # 3. PAG-Inferenz aufrufen
+        # Rufe die neue PAG-Inferenz mit dem String-Prompt und der Temperatur auf
         output = self.pag.infer(
-            input_sequence,
-            temperature=temp,
-            attention_mod_func=attn_func,
-            layer_drop_rate=drop_rate
+            prompt=prompt,
+            temperature=temp
         )
 
         return output
