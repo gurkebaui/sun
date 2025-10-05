@@ -11,7 +11,7 @@ class PAG_Model:
     fortschrittliche Sprachverarbeitung.
     """
 
-    def __init__(self, model_name: str = "google/flan-t5-base"):
+    def __init__(self, model_name: str = "google/flan-t5-xl"):
         """
         Initialisiert den PAG durch Laden des vortrainierten Modells und Tokenizers.
         Verschiebt das Modell automatisch auf die verfügbare GPU, falls vorhanden.

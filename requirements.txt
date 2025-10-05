@@ -1,29 +1,20 @@
 # requirements.txt
 #
-# WICHTIG: Diese Versionen sind aufeinander abgestimmt, um
-# Abhängigkeitskonflikte zu vermeiden.
+# ANLEITUNG: Aufgrund komplexer Abhängigkeiten zwischen TensorFlow und PyTorch,
+# installieren Sie die Pakete manuell in der Reihenfolge, die im Sprint-7-Abschlussbericht
+# dokumentiert ist, anstatt `pip install -r requirements.txt` zu verwenden.
 
-# Manuelle PyTorch-Installation für GPU-Support:
-# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# Kern-Ökosysteme
+tensorflow
+tensorflow-hub
+torch
+torchvision
+transformers
+sentence-transformers
 
-# torch==2.1.2
-transformers==4.35.2
-accelerate==0.25.0
-
-# KORRIGIERT: sentence-transformers auf eine neuere Version angehoben,
-# die mit transformers==4.35.2 kompatibel ist.
-sentence-transformers==2.7.0
-
-# Abhängigkeiten, die oft Probleme verursachen, werden hier fixiert
-numpy==1.26.2
-pandas==2.1.4
-scikit-learn==1.3.2
-protobuf==3.20.0
-chromadb==0.4.22
-
-opencv-python==4.9.0.80
-sounddevice==0.4.6
-openai-whisper==20231117
-tensorflow==2.15.0
-tensorflow_hub==0.16.1
-librosa==0.10.1
+# Sensorik & Daten
+opencv-python
+sounddevice
+librosa
+pandas
+chromadb
