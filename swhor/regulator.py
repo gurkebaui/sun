@@ -9,9 +9,9 @@ class SWHoR:
     # Konfigurationskonstanten
     PRESSURE_THRESHOLD = 80.0
     MAX_PRESSURE = 150.0
-    PRESSURE_BUILD_BASE_RATE = 0.5
+    PRESSURE_BUILD_BASE_RATE = 50.5
     FATIGUE_PENALTY = -0.1
-    SLEEP_RECOVERY_RATE = 1.0
+    SLEEP_RECOVERY_RATE = 30.0
     SLEEP_REWARD = 0.2
 
     # Konstanten für das optimale Schlaffenster

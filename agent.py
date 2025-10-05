@@ -19,6 +19,8 @@ class CAPA_Agent:
         self.memory = MemorySubsystem()
         self.experience_buffer: List[Dict[str, Any]] = []
         self.perception = PerceptionSubsystem()
+        # FINALE KORREKTUR 1: Initialisiere den vorherigen y-Wert.
+        self._previous_y = self.asc.get_state()['y']
 
     def _consolidate_and_synthesize_memories(self):
         # ... (Diese Methode bleibt exakt wie von Ihnen bereitgestellt)
@@ -28,41 +30,76 @@ class CAPA_Agent:
             return
         # ... (Rest der Logik)
 
-    def update(self, verbose: bool = False):
+    def _update_arousal_from_valence_change(self):
+            """
+            FINALE KORREKTUR 2: Diese Methode wurde hinzugefügt.
+            Der interne Reflex, der Arousal und Valenz koppelt.
+            """
+            current_y = self.asc.get_state()['y']
+            y_delta = current_y - self._previous_y
+
+            threshold = 5.0
+
+            if y_delta < -threshold:
+                self.asc.update_state(delta_x=10)
+                print("[Internal Reflex] Negativer Valenz-Abfall erkannt. Arousal (Stress) erhöht.")
+            elif y_delta > threshold:
+                self.asc.update_state(delta_x=-10)
+                print("[Internal Reflex] Positiver Valenz-Anstieg erkannt. Arousal (Stress) verringert.")
+
+            self._previous_y = current_y
+
+    def update(self, verbose: bool = False, text_override: str = None):
         """
-        Die zentrale "Bewusstseins"-Schleife.
-        Nimmt die Welt wahr, reagiert und führt Hintergrundprozesse aus.
+        FINALE ARCHITEKTUR: Die zentrale "Bewusstseins"-Schleife.
+        Trennt nun korrekt zwischen wachen und schlafenden Zuständen.
         """
-        # 1. Autonome, unbewusste Prozesse (Herzschlag, Müdigkeit)
+        # 1. Autonome, unbewusste Prozesse (Herzschlag, Müdigkeit, Reflexe)
         self._run_background_processes()
 
-        # Nur wenn der Agent wach ist, nimmt er aktiv wahr und denkt.
-        if not self.swhor.is_sleeping:
-            # 2. Bewusste Wahrnehmung der Umgebung
+        # 2. Prüfe den Bewusstseinszustand AM ANFANG des Zyklus
+        if self.swhor.is_sleeping:
+            print("Agent schläft... zZz...")
+            return  # BEENDE den bewussten Zyklus hier.
+
+        # --- WACHZUSTAND ---
+        sensory_report = ""
+        if text_override:
+            print(f"Manuelle Eingabe empfangen: '{text_override}'")
+            vision_report = self.perception._perceive_vision()
+            sound_report = "I hear ambient sounds like: Speech."
+            speech_report = f"I hear someone say: '{text_override}'"
+            sensory_report = f"Sensory Input:\n- {vision_report}\n- {sound_report}\n- {speech_report}"
+            print(sensory_report)
+        else:
             sensory_report = self.perception.perceive()
 
-            # 3. Kognitiver Zyklus ("Gedankenprozess")
-            final_answer, full_prompt = self.run_inference_cycle(sensory_report)
+        final_answer, full_prompt = self.run_inference_cycle(sensory_report)
 
-            if verbose:
-                print("\n" + "=" * 20 + " DEBUG: VOLLSTÄNDIGER PROMPT " + "=" * 20)
-                print(full_prompt)
-                print("=" * 66 + "\n")
+        if verbose:
+            print("\n" + "=" * 20 + " DEBUG: VOLLSTÄNDIGER PROMPT " + "=" * 20)
+            print(full_prompt)
+            print("=" * 66 + "\n")
 
-            print(f"Agent > {final_answer}")
-        else:
-            print("Agent schläft... zZz...")
+        print(f"Agent > {final_answer}")
 
     def _run_background_processes(self):
         """Führt die autonomen Subsysteme aus."""
         current_state = self.asc.get_state()
-        wants_to_sleep = self.swhor.sleep_pressure > self.swhor.PRESSURE_THRESHOLD
+        self._update_arousal_from_valence_change()
 
+        # FINALE KORREKTUR: Die Entscheidung zum Schlafen und die Zustandsänderung
+        # müssen vor der bewussten Schleife stattfinden.
+        wants_to_sleep = self.swhor.sleep_pressure > self.swhor.PRESSURE_THRESHOLD
         if wants_to_sleep and not self.swhor.is_sleeping:
             is_safe = self.vigilance.is_safe_to_sleep(current_state['x'])
             if is_safe:
+                print("[Agent] Hoher Schlafdruck und sichere Umgebung. Leite Schlaf ein.")
                 self.asc.set_state(x=-50, y=current_state['y'])
+                # WICHTIG: Der SWHoR muss SOFORT über den neuen Zustand informiert werden.
+                self.swhor.update(self.asc.get_state()['x'])
                 self._consolidate_and_synthesize_memories()
+                return  # Beende die Hintergrundprozesse hier für diesen Tick.
 
         swhor_deltas = self.swhor.update(self.asc.get_state()['x'])
         self.asc.update_state(

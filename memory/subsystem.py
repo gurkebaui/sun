@@ -1,4 +1,3 @@
-# memory/subsystem.py
 import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
@@ -10,27 +9,44 @@ from typing import List, Dict, Any
 class MemorySubsystem:
     """
     Verwaltet das episodische Langzeitgedächtnis von CAPA.
-    Dies ist die finale, vollständige und korrigierte Version.
+    FINALE ARCHITEKTUR: Trennt nun explizit zwischen Produktions- und Test-Datenbanken.
     """
-    DB_PATH = "./capa_memory_db"
-    COLLECTION_NAME = "capa_memory"
-    MODEL_NAME = 'all-MiniLM-L6-v2'
+    # Der Standard-Pfad für den normalen Betrieb
+    DEFAULT_DB_PATH = "./capa_memory_db"
 
-    def __init__(self):
-        print("Initialisiere Gedächtnis-Subsystem...")
+    def __init__(self, db_path: str = None):
+        """
+        Initialisiert den Client mit einem spezifischen Datenbank-Pfad.
+        Wenn kein Pfad angegeben wird, wird der Standard-Produktions-Pfad verwendet.
+        """
+        self.db_path = db_path if db_path is not None else self.DEFAULT_DB_PATH
 
-        self.embedding_model = SentenceTransformer(self.MODEL_NAME)
+        print(f"Initialisiere Gedächtnis-Subsystem am Pfad: {self.db_path}...")
 
-        if not os.path.exists(self.DB_PATH):
-            os.makedirs(self.DB_PATH)
+        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+
+        if not os.path.exists(self.db_path):
+            os.makedirs(self.db_path)
+
+        # Erlaube das Zurücksetzen nur, wenn wir uns explizit im Test-Modus befinden
+        allow_db_reset = "test" in self.db_path
 
         self.client = chromadb.PersistentClient(
-            path=self.DB_PATH,
-            settings=Settings(anonymized_telemetry=False, allow_reset=True)
+            path=self.db_path,
+            settings=Settings(anonymized_telemetry=False, allow_reset=allow_db_reset)
         )
-        self.collection = self.client.get_or_create_collection(name=self.COLLECTION_NAME)
+        self.collection = self.client.get_or_create_collection(name="capa_memory")
 
         print(f"Gedächtnis-Subsystem bereit. Datenbank-Einträge: {self.collection.count()}")
+
+    def reset_database_for_testing(self):
+        """
+        Eine explizite, gefährliche Funktion, die NUR für Tests verwendet werden darf.
+        """
+        if "test" not in self.db_path:
+            raise PermissionError("Das Zurücksetzen der Datenbank ist nur im Test-Modus erlaubt.")
+        print("Setze Test-Datenbank zurück...")
+        self.client.reset()
 
     def add_experience(self, text_description: str, metadata: dict):
         embedding = self.embedding_model.encode(text_description).tolist()
