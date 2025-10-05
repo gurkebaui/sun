@@ -71,59 +71,82 @@ class CAPA_Agent:
         )
 
 
-    def _construct_internal_monologue_prompt(self, situation_text: str, memories: List[Dict[str, Any]],
-                                             state: Dict[str, float]) -> str:
-        context = (
+    def _construct_internal_monologue_prompt(self, main_situation: str, context: str, state: Dict[str, float]) -> str:
+        """Baut den Prompt für die interne Analyse mit der neuen Fokus-Struktur."""
+        full_context = (
             f"Context:\n- My internal state is: Arousal={state['x']:.0f}, Valence={state['y']:.0f}.\n"
-            f"- The current situation is: '{situation_text}'\n"
-            "- My relevant memories are:\n"
+            f"- Additional context is: '{context}'\n"
+            # Erinnerungen werden hier nicht mehr benötigt, da sie im nächsten Schritt relevanter sind.
         )
+        task = f"\nTask: Based on the context, what is my key conclusion or plan regarding the main situation?\nMain Situation: '{main_situation}'\nInternal Thought:"
+        return f"{full_context}\n{task}"
+
+    def _construct_final_response_prompt(self, main_situation: str, internal_thought: str,
+                                         memories: List[Dict[str, Any]]) -> str:
+        """Baut den finalen Prompt mit Fokus auf die Haupt-Situation."""
+        persona = "You are CAPA. You are helpful, factual, and concise. You must always respond in English."
+
+        memory_section = "Relevant memories:\n"
         if memories:
             unique_memories = list({mem['text']: mem for mem in memories}.values())
             for mem in unique_memories:
-                context += f"  - I remember that '{mem['text']}'\n"
+                memory_section += f"- You remember that '{mem['text']}'\n"
         else:
-            context += "  - None\n"
-        task = "\nTask: Based on all the context, what is my key conclusion or plan? (Internal thought only)"
-        return context + task
-
-    def _construct_final_response_prompt(self, situation_text: str, internal_thought: str) -> str:
-        # FINALE KORREKTUR: Füge eine explizite Anweisung für die Sprache hinzu.
-        persona = (
-            "You are CAPA. You are helpful, factual, and concise. "
-            "You do not ask questions back to the user. "
-            "Your goal is to give the most direct and useful answer possible. "
-            "You must always respond in English."
-        )
+            memory_section += "- None\n"
 
         context = (
             f"Your internal thought is: '{internal_thought}'.\n"
-            f"The user's request (derived from sensory input) is: '{situation_text}'."
+            f"{memory_section}"
         )
-        task = "\nTask: Based on your personality and your internal thought, what is your immediate, direct response?\nYour Response:"
+        task = f"\nTask: Based on your personality, thought, and memories, what is your immediate, direct response to the user's statement?\nUser's Statement: '{main_situation}'\nYour Response:"
         return f"{persona}\n\n{context}\n\n{task}"
 
-    def run_inference_cycle(self, situation_text: str) -> (str, str):
+    def run_inference_cycle(self, sensory_data: dict) -> (str, str):
+        """
+        FINALE VERSION: Implementiert die Fokus-Logik.
+        """
         print("\n--- Beginn des Zwei-Stufen-Denkprozesses ---")
         current_state = self.asc.get_state()
         temp = modulate_temperature(current_state['x'], current_state['y'])
 
-        print(f"[1&2] Rufe relevante Erinnerungen ab...")
-        relevant_memories = self.memory.query_relevant_memories(situation_text, n_results=3)
+        # SCHRITT 1: FOKUS FINDEN (Priorisierung der Wahrnehmung)
+        vision_text = sensory_data.get("vision", "")
+        sound_text = sensory_data.get("sound", "")
+        speech_text = sensory_data.get("speech", "")
 
+        main_situation = ""
+        other_context = []
+        if speech_text:
+            main_situation = speech_text
+            other_context.append(vision_text)
+            other_context.append(sound_text)
+        elif vision_text:
+            main_situation = vision_text
+            other_context.append(sound_text)
+        else:
+            main_situation = sound_text
+
+        context_str = ". ".join(filter(None, other_context))
+
+        # Schritt 2: Relevante Erinnerungen basierend auf dem FOKUS abrufen
+        print(f"[2] Rufe relevante Erinnerungen für den Fokus ab: '{main_situation}'...")
+        relevant_memories = self.memory.query_relevant_memories(main_situation, n_results=3)
+
+        # Schritt 3a: Kognitiver Schritt 1 - INTERNER MONOLOG
         print("[3a] Formuliere internen Gedanken...")
-        internal_prompt = self._construct_internal_monologue_prompt(situation_text, relevant_memories, current_state)
+        internal_prompt = self._construct_internal_monologue_prompt(main_situation, context_str, current_state)
         internal_thought = self.pag.infer(prompt=internal_prompt, temperature=temp)
 
+        # Schritt 3b: Kognitiver Schritt 2 - EXTERNE ANTWORT
         print("[3b] Formuliere externe Antwort basierend auf dem Gedanken...")
-        final_prompt = self._construct_final_response_prompt(situation_text, internal_thought)
+        final_prompt = self._construct_final_response_prompt(main_situation, internal_thought, relevant_memories)
         final_answer = self.pag.infer(prompt=final_prompt, temperature=temp)
 
+        # Schritt 4 & 5: Aktion & Lernen
         print("[5] Kognitiver Prozess abgeschlossen. Erlebnis wird im Puffer gespeichert.")
-        experience_summary = f"In the situation '{situation_text}', I thought '{internal_thought}' and responded: '{final_answer}'"
+        experience_summary = f"In the situation '{main_situation}', I thought '{internal_thought}' and responded: '{final_answer}'"
         self.experience_buffer.append({'text': experience_summary, 'metadata': current_state})
 
-        # KORREKTUR 2: Referenzfehler behoben
         return final_answer, final_prompt
 
     def handle_stimulus(self, stimulus: dict):

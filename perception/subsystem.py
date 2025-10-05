@@ -92,12 +92,26 @@ class PerceptionSubsystem:
             print(f"WARNING: A non-critical error occurred during audio processing: {e}")
             return "Audio processing temporarily failed.", ""
 
-    def perceive(self) -> str:
+    def perceive(self) -> dict:
+        """
+        FINALE VERSION: Gibt einen strukturierten Dictionary mit den getrennten
+        Sinnesdaten zurück, anstatt eines formatierten Strings.
+        """
         print("\n--- Perception Cycle ---")
+
         vision_report = self._perceive_vision()
         sound_report, speech_report = self._perceive_audio()
-        full_report = f"Sensory Input:\n- {vision_report}\n- {sound_report}"
-        if speech_report:
-            full_report += f"\n- {speech_report}"
-        print(full_report)
-        return full_report
+
+        # Gib die Rohdaten als strukturiertes Objekt zurück
+        sensory_data = {
+            "vision": vision_report,
+            "sound": sound_report,
+            "speech": speech_report
+        }
+
+        # Formatiere den Output nur für die Konsole
+        print("Sensory Input:")
+        for key, value in sensory_data.items():
+            if value: print(f"- {key.capitalize()}: {value}")
+
+        return sensory_data
