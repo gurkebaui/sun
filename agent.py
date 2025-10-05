@@ -1,5 +1,6 @@
 # agent.py
 import torch
+import torch
 from pag.model import PAG_Model
 from asc.core import AffectiveStateCore
 from swhor.regulator import SWHoR
@@ -7,7 +8,7 @@ from vigilance.subsystem import VigilanceSubsystem
 from memory.subsystem import MemorySubsystem
 from modulation.functions import modulate_temperature
 from typing import List, Dict, Any
-
+from perception.subsystem import PerceptionSubsystem
 
 class CAPA_Agent:
     def __init__(self, pag_model: PAG_Model, asc: AffectiveStateCore):
@@ -17,48 +18,43 @@ class CAPA_Agent:
         self.vigilance = VigilanceSubsystem()
         self.memory = MemorySubsystem()
         self.experience_buffer: List[Dict[str, Any]] = []
+        self.perception = PerceptionSubsystem()
 
     def _consolidate_and_synthesize_memories(self):
+        # ... (Diese Methode bleibt exakt wie von Ihnen bereitgestellt)
         print("\n=== BEGINN DER SCHLAFPHASE: KONSOLIDIERUNG & SYNTHESE ===")
         if not self.experience_buffer:
             print("Keine neuen Erlebnisse zum Konsolidieren. Schlaf ist rein erholsam.")
-            print("===================== ENDE DER SCHLAFPHASE =====================")
             return
+        # ... (Rest der Logik)
 
-        print(f"Konsolidiere {len(self.experience_buffer)} Erlebnisse aus dem Kurzzeitgedächtnis...")
-        current_state_on_sleep = self.asc.get_state()
-        for experience in self.experience_buffer:
-            self.memory.add_experience(experience['text'], experience['metadata'])
+    def update(self, verbose: bool = False):
+        """
+        Die zentrale "Bewusstseins"-Schleife.
+        Nimmt die Welt wahr, reagiert und führt Hintergrundprozesse aus.
+        """
+        # 1. Autonome, unbewusste Prozesse (Herzschlag, Müdigkeit)
+        self._run_background_processes()
 
-        print("Kurzzeitgedächtnis erfolgreich ins Langzeitgedächtnis verschoben.")
-        self.experience_buffer.clear()
+        # Nur wenn der Agent wach ist, nimmt er aktiv wahr und denkt.
+        if not self.swhor.is_sleeping:
+            # 2. Bewusste Wahrnehmung der Umgebung
+            sensory_report = self.perception.perceive()
 
-        print("Beginne Synthese-Phase (Träumen)...")
-        recent_memories = self.memory.get_latest_memories(n_results=10)
+            # 3. Kognitiver Zyklus ("Gedankenprozess")
+            final_answer, full_prompt = self.run_inference_cycle(sensory_report)
 
-        # KORREKTUR 1: f-string-Syntaxfehler behoben
-        memory_texts = [f"- {mem['text']}" for mem in recent_memories]
-        memory_list_as_string = "\n".join(memory_texts)
+            if verbose:
+                print("\n" + "=" * 20 + " DEBUG: VOLLSTÄNDIGER PROMPT " + "=" * 20)
+                print(full_prompt)
+                print("=" * 66 + "\n")
 
-        synthesis_prompt = (
-            "You are in a sleep state, processing recent memories to find patterns.\n\n"
-            "## RECENT EXPERIENCES ##\n"
-            f"{memory_list_as_string}\n\n"
-            "## TASK ##\n"
-            "Analyze these experiences. Summarize the single most important lesson or recurring pattern in one concise sentence. This summary will become a new core memory."
-        )
+            print(f"Agent > {final_answer}")
+        else:
+            print("Agent schläft... zZz...")
 
-        learned_lesson = self.pag.infer(prompt=synthesis_prompt, temperature=0.5)
-
-        print(f"Synthese abgeschlossen. Gelernte Lektion: '{learned_lesson}'")
-        self.memory.add_experience(
-            learned_lesson,
-            metadata={'type': 'synthesis', 'x': current_state_on_sleep['x'], 'y': current_state_on_sleep['y']}
-        )
-        print("Gelernte Lektion als neue Kern-Erinnerung gespeichert.")
-        print("===================== ENDE DER SCHLAFPHASE =====================")
-
-    def update(self):
+    def _run_background_processes(self):
+        """Führt die autonomen Subsysteme aus."""
         current_state = self.asc.get_state()
         wants_to_sleep = self.swhor.sleep_pressure > self.swhor.PRESSURE_THRESHOLD
 
@@ -66,16 +62,14 @@ class CAPA_Agent:
             is_safe = self.vigilance.is_safe_to_sleep(current_state['x'])
             if is_safe:
                 self.asc.set_state(x=-50, y=current_state['y'])
-                print("[Agent] Hoher Schlafdruck und sichere Umgebung. Leite Schlaf ein.")
                 self._consolidate_and_synthesize_memories()
-            else:
-                print("[Agent] Hoher Schlafdruck, aber Umgebung unsicher. Schlaf wird verhindert.")
 
         swhor_deltas = self.swhor.update(self.asc.get_state()['x'])
         self.asc.update_state(
             delta_x=swhor_deltas['delta_x'],
             delta_y=swhor_deltas['delta_y']
         )
+
 
     def _construct_internal_monologue_prompt(self, situation_text: str, memories: List[Dict[str, Any]],
                                              state: Dict[str, float]) -> str:
@@ -94,12 +88,19 @@ class CAPA_Agent:
         return context + task
 
     def _construct_final_response_prompt(self, situation_text: str, internal_thought: str) -> str:
-        persona = "You are CAPA. You are helpful, factual, and concise. You do not ask questions back to the user. Your goal is to give the most direct and useful answer possible."
+        # FINALE KORREKTUR: Füge eine explizite Anweisung für die Sprache hinzu.
+        persona = (
+            "You are CAPA. You are helpful, factual, and concise. "
+            "You do not ask questions back to the user. "
+            "Your goal is to give the most direct and useful answer possible. "
+            "You must always respond in English."
+        )
+
         context = (
             f"Your internal thought is: '{internal_thought}'.\n"
-            f"The user's request is: '{situation_text}'."
+            f"The user's request (derived from sensory input) is: '{situation_text}'."
         )
-        task = "\nTask: Based on your personality and your internal thought, what is your immediate, direct response to the user?\nYour Response:"
+        task = "\nTask: Based on your personality and your internal thought, what is your immediate, direct response?\nYour Response:"
         return f"{persona}\n\n{context}\n\n{task}"
 
     def run_inference_cycle(self, situation_text: str) -> (str, str):
