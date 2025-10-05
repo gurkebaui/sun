@@ -34,9 +34,7 @@ class PerceptionSubsystem:
 
         try:
             print("Loading auditory models (Whisper & Hugging Face Audio Classification)...")
-            self.whisper_model = whisper.load_model("base")
-
-            # KORREKTUR: Ersetze YAMNet/TensorFlow durch eine PyTorch-basierte Pipeline.
+            self.whisper_model = whisper.load_model("base", device=self.device)
             self.sound_classifier = pipeline(
                 "audio-classification",
                 model="superb/hubert-large-superb-er",
@@ -66,18 +64,24 @@ class PerceptionSubsystem:
         return f"I see: {caption}."
 
     def _perceive_audio(self) -> (str, str):
+        """
+        FINALE VERSION: Radikal vereinfachte und stabile Audio-Aufnahme.
+        """
         if not self.audio_enabled:
             return "Auditory perception is disabled.", ""
         try:
             samplerate = 16000
-            duration = 4
+            duration = 5  # Ein fester, großzügiger 5-Sekunden-Aufnahmezeitraum.
+
+            print(f"Listening for {duration} seconds...")
             audio_data = sd.rec(int(samplerate * duration), samplerate=samplerate, channels=1, dtype='float32')
             sd.wait()
             audio_data = audio_data.flatten()
 
+            # Transkription
             transcription = self.whisper_model.transcribe(audio_data, fp16=torch.cuda.is_available())['text'].strip()
 
-            # KORREKTUR: Verwende die neue Pipeline.
+            # Geräuscherkennung
             sound_results = self.sound_classifier(audio_data, top_k=1)
             inferred_class = sound_results[0]['label'] if sound_results else "Silence"
 
