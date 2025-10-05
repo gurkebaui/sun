@@ -1,20 +1,24 @@
 # requirements.txt
 #
-# ANLEITUNG: Aufgrund komplexer Abhängigkeiten zwischen TensorFlow und PyTorch,
-# installieren Sie die Pakete manuell in der Reihenfolge, die im Sprint-7-Abschlussbericht
-# dokumentiert ist, anstatt `pip install -r requirements.txt` zu verwenden.
+# FINALES, STABILES MANIFEST. TENSORFLOW WURDE ENTFERNT.
 
-# Kern-Ökosysteme
-tensorflow
-tensorflow-hub
-torch
-torchvision
-transformers
-sentence-transformers
+# Stabilitäts-Pin
+numpy==1.26.4
+
+# PyTorch/CUDA-Ökosystem (manuell installieren)
+# torch==2.1.2
+
+# Hugging Face-Ökosystem
+transformers==4.35.2
+accelerate==0.25.0
+sentence-transformers==2.7.0
+# NEU: timm wird von einigen Audio-Modellen benötigt
+timm
 
 # Sensorik & Daten
-opencv-python
-sounddevice
-librosa
-pandas
-chromadb
+opencv-python==4.9.0.80
+sounddevice==0.4.6
+openai-whisper
+librosa==0.10.1
+pandas==2.1.4
+chromadb==0.4.22

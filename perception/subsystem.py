@@ -1,20 +1,17 @@
+# perception/subsystem.py
 import cv2
 import sounddevice as sd
 import numpy as np
 import whisper
-import tensorflow as tf
-import tensorflow_hub as hub
-import librosa
-from transformers import BlipProcessor, BlipForConditionalGeneration
+from transformers import pipeline, BlipProcessor, BlipForConditionalGeneration
 import torch
 import warnings
-import pandas as pd
 
+# Unterdrücke laute Warnungen
+warnings.filterwarnings("ignore", category=UserWarning)
 
-# ... (Warnungen unterdrücken) ...
 
 class PerceptionSubsystem:
-    # ... (__init__ bleibt gleich, außer der Log-Nachrichten) ...
     def __init__(self):
         print("Initializing Sensory Organs (Perception Subsystem)...")
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -36,12 +33,15 @@ class PerceptionSubsystem:
             self.vision_enabled = False
 
         try:
-            print("Loading auditory models (Whisper & YAMNet)...")
+            print("Loading auditory models (Whisper & Hugging Face Audio Classification)...")
             self.whisper_model = whisper.load_model("base")
-            self.yamnet_model = hub.load('https://tfhub.dev/google/yamnet/1')
 
-            yamnet_classes_url = 'https://raw.githubusercontent.com/tensorflow/models/master/research/audioset/yamnet/yamnet_class_map.csv'
-            self.yamnet_class_names = pd.read_csv(yamnet_classes_url)['display_name'].tolist()
+            # KORREKTUR: Ersetze YAMNet/TensorFlow durch eine PyTorch-basierte Pipeline.
+            self.sound_classifier = pipeline(
+                "audio-classification",
+                model="superb/hubert-large-superb-er",
+                device=0 if self.device.type == 'cuda' else -1
+            )
 
             devices = sd.query_devices()
             if not any(d['max_input_channels'] > 0 for d in devices):
@@ -52,15 +52,22 @@ class PerceptionSubsystem:
             print(f"ERROR during auditory perception initialization: {e}")
             self.audio_enabled = False
 
-    # ... (_perceive_vision bleibt gleich) ...
     def _perceive_vision(self) -> str:
-        # ... (Code bleibt gleich) ...
+        if not self.vision_enabled: return "Visual perception is disabled."
+        cam = cv2.VideoCapture(0)
+        if not cam.isOpened(): return "Error: Could not access webcam."
+        ret, frame = cam.read()
+        cam.release()
+        if not ret: return "Error: Could not capture image."
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        inputs = self.vision_processor(images=rgb_frame, return_tensors="pt").to(self.device)
+        caption = self.vision_processor.decode(self.vision_model.generate(**inputs, max_length=50)[0],
+                                               skip_special_tokens=True)
         return f"I see: {caption}."
 
     def _perceive_audio(self) -> (str, str):
         if not self.audio_enabled:
             return "Auditory perception is disabled.", ""
-
         try:
             samplerate = 16000
             duration = 4
@@ -68,23 +75,25 @@ class PerceptionSubsystem:
             sd.wait()
             audio_data = audio_data.flatten()
 
-            transcription = self.whisper_model.transcribe(audio_data, fp16=False)['text'].strip()
+            transcription = self.whisper_model.transcribe(audio_data, fp16=torch.cuda.is_available())['text'].strip()
 
-            scores, _, _ = self.yamnet_model(audio_data)
-
-            # FINALE KORREKTUR: Wandle den Tensor in ein NumPy-Array um und extrahiere dann den Python-Skalar.
-            top_class_index = tf.argmax(scores).numpy().item()
-            inferred_class = self.yamnet_class_names[top_class_index]
+            # KORREKTUR: Verwende die neue Pipeline.
+            sound_results = self.sound_classifier(audio_data, top_k=1)
+            inferred_class = sound_results[0]['label'] if sound_results else "Silence"
 
             sound_desc = f"I hear ambient sounds like: {inferred_class}."
             speech_desc = f"I hear someone say: '{transcription}'" if transcription else ""
-
             return sound_desc, speech_desc
         except Exception as e:
             print(f"WARNING: A non-critical error occurred during audio processing: {e}")
             return "Audio processing temporarily failed.", ""
 
-    # ... (perceive-Methode bleibt gleich) ...
     def perceive(self) -> str:
-        # ... (Code bleibt gleich) ...
+        print("\n--- Perception Cycle ---")
+        vision_report = self._perceive_vision()
+        sound_report, speech_report = self._perceive_audio()
+        full_report = f"Sensory Input:\n- {vision_report}\n- {sound_report}"
+        if speech_report:
+            full_report += f"\n- {speech_report}"
+        print(full_report)
         return full_report

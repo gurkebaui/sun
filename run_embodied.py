@@ -15,7 +15,7 @@ def main():
     print("--- SYSTEMSTART: VERKÖRPERTER MODUS ---")
 
     # Initialisiere die Kernkomponenten
-    pag = PAG_Model(model_name="google/flan-t5-base")
+    pag = PAG_Model(model_name="google/flan-t5-xl")
     asc = AffectiveStateCore()
     agent = CAPA_Agent(pag_model=pag, asc=asc)
 
