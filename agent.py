@@ -10,17 +10,17 @@ from modulation.functions import modulate_temperature
 from typing import List, Dict, Any
 from perception.subsystem import PerceptionSubsystem
 
+
 class CAPA_Agent:
     def __init__(self, pag_model: PAG_Model, asc: AffectiveStateCore):
-        self.pag = pag_model
-        self.asc = asc
-        self.swhor = SWHoR()
-        self.vigilance = VigilanceSubsystem()
-        self.memory = MemorySubsystem()
-        self.experience_buffer: List[Dict[str, Any]] = []
-        self.perception = PerceptionSubsystem()
-        # FINALE KORREKTUR 1: Initialisiere den vorherigen y-Wert.
-        self._previous_y = self.asc.get_state()['y']
+            self.pag = pag_model
+            self.asc = asc
+            self.swhor = SWHoR()
+            self.vigilance = VigilanceSubsystem()
+            self.memory = MemorySubsystem()  # Ruft die korrekte, persistente DB auf
+            self.experience_buffer: List[Dict[str, Any]] = []
+            self.perception = PerceptionSubsystem()
+            self._previous_y = self.asc.get_state()['y']
 
     def _consolidate_and_synthesize_memories(self):
         # ... (Diese Methode bleibt exakt wie von Ihnen bereitgestellt)
@@ -84,28 +84,25 @@ class CAPA_Agent:
         print(f"Agent > {final_answer}")
 
     def _run_background_processes(self):
-        """Führt die autonomen Subsysteme aus."""
+        """FINALE KORREKTUR: Stellt die korrekte Reihenfolge der Schlaf-Logik sicher."""
         current_state = self.asc.get_state()
         self._update_arousal_from_valence_change()
-
-        # FINALE KORREKTUR: Die Entscheidung zum Schlafen und die Zustandsänderung
-        # müssen vor der bewussten Schleife stattfinden.
         wants_to_sleep = self.swhor.sleep_pressure > self.swhor.PRESSURE_THRESHOLD
+
+        # Führe zuerst das SWHoR-Update aus, um den Schlafzustand korrekt zu setzen
+        swhor_deltas = self.swhor.update(self.asc.get_state()['x'])
+        self.asc.update_state(delta_x=swhor_deltas['delta_x'], delta_y=swhor_deltas['delta_y'])
+
+        # Prüfe JETZT, ob der Agent einschlafen will UND der Zustand sicher ist
         if wants_to_sleep and not self.swhor.is_sleeping:
             is_safe = self.vigilance.is_safe_to_sleep(current_state['x'])
             if is_safe:
                 print("[Agent] Hoher Schlafdruck und sichere Umgebung. Leite Schlaf ein.")
                 self.asc.set_state(x=-50, y=current_state['y'])
-                # WICHTIG: Der SWHoR muss SOFORT über den neuen Zustand informiert werden.
+                # Informiere den SWHoR über den neuen Zustand, um `is_sleeping` zu synchronisieren
                 self.swhor.update(self.asc.get_state()['x'])
+                # Führe die Konsolidierung aus, NACHDEM der Schlafzustand gesetzt wurde
                 self._consolidate_and_synthesize_memories()
-                return  # Beende die Hintergrundprozesse hier für diesen Tick.
-
-        swhor_deltas = self.swhor.update(self.asc.get_state()['x'])
-        self.asc.update_state(
-            delta_x=swhor_deltas['delta_x'],
-            delta_y=swhor_deltas['delta_y']
-        )
 
 
     def _construct_internal_monologue_prompt(self, main_situation: str, context: str, state: Dict[str, float]) -> str:
