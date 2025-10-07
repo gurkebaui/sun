@@ -18,13 +18,7 @@ class MemorySubsystem:
         print(f"Gedächtnis-Subsystem bereit. Datenbank-Einträge: {self.collection.count()}")
 
     def shutdown(self):
-        """
-        A PersistentClient manages its own connections.
-        Calling client.reset() was the amnesia bug that wiped the database.
-        This method is now safe and does nothing.
-        """
-        print("Fahre Gedächtnis-Subsystem herunter (Verbindungen werden automatisch verwaltet).")
-        # The client.reset() line has been removed to ensure memory persistence.
+        print("Shutting down memory subsystem.")
 
     def reset_database_for_testing(self):
         if "test" not in self.db_path: raise PermissionError("Reset ist nur im Test-Modus erlaubt.")

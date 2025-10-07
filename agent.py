@@ -23,12 +23,44 @@ class CAPA_Agent:
             self._previous_y = self.asc.get_state()['y']
 
     def _consolidate_and_synthesize_memories(self):
-        # ... (Diese Methode bleibt exakt wie von Ihnen bereitgestellt)
         print("\n=== BEGINN DER SCHLAFPHASE: KONSOLIDIERUNG & SYNTHESE ===")
         if not self.experience_buffer:
             print("Keine neuen Erlebnisse zum Konsolidieren. Schlaf ist rein erholsam.")
+            print("===================== ENDE DER SCHLAFPHASE =====================")
             return
-        # ... (Rest der Logik)
+
+        print(f"Konsolidiere {len(self.experience_buffer)} Erlebnisse aus dem Kurzzeitgedächtnis...")
+        current_state_on_sleep = self.asc.get_state()
+        for experience in self.experience_buffer:
+            self.memory.add_experience(experience['text'], experience['metadata'])
+
+        print("Kurzzeitgedächtnis erfolgreich ins Langzeitgedächtnis verschoben.")
+        self.experience_buffer.clear()
+
+        print("Beginne Synthese-Phase (Träumen)...")
+        recent_memories = self.memory.get_latest_memories(n_results=10)
+
+        # KORREKTUR 1: f-string-Syntaxfehler behoben
+        memory_texts = [f"- {mem['text']}" for mem in recent_memories]
+        memory_list_as_string = "\n".join(memory_texts)
+
+        synthesis_prompt = (
+            "You are in a sleep state, processing recent memories to find patterns.\n\n"
+            "## RECENT EXPERIENCES ##\n"
+            f"{memory_list_as_string}\n\n"
+            "## TASK ##\n"
+            "Analyze these experiences. Summarize the single most important lesson or recurring pattern in one concise sentence. This summary will become a new core memory."
+        )
+
+        learned_lesson = self.pag.infer(prompt=synthesis_prompt, temperature=0.5)
+
+        print(f"Synthese abgeschlossen. Gelernte Lektion: '{learned_lesson}'")
+        self.memory.add_experience(
+            learned_lesson,
+            metadata={'type': 'synthesis', 'x': current_state_on_sleep['x'], 'y': current_state_on_sleep['y']}
+        )
+        print("Gelernte Lektion als neue Kern-Erinnerung gespeichert.")
+        print("===================== ENDE DER SCHLAFPHASE =====================")
 
     def _update_arousal_from_valence_change(self):
             """

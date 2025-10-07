@@ -1,4 +1,5 @@
 # run_embodied.py
+import os
 import time
 import argparse
 import sys
@@ -10,6 +11,7 @@ sys.path.append('.')
 from agent import CAPA_Agent
 from pag.model import PAG_Model
 from asc.core import AffectiveStateCore
+from memory.subsystem import MemorySubsystem
 
 
 class InputHandler:
@@ -64,8 +66,33 @@ def main():
 
     print("--- SYSTEMSTART: VERKÖRPERTER MODUS ---")
 
-    agent = CAPA_Agent(PAG_Model(model_name="google/flan-t5-xl"), AffectiveStateCore())
+    # --- KORREKTUR BEGINNT HIER ---
+
+    # 1. DEN PFAD ZUR DATENBANK EXPLIZIT UND ROBUST FESTLEGEN (Bleibt gleich)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(script_dir, "capa_memory_db")
+
+    # 2. DIE SUBSYSTEME HIER ERSTELLEN (Bleibt gleich)
+    pag_model = PAG_Model(model_name="google/flan-t5-xl")
+    asc = AffectiveStateCore()
+    memory_system = MemorySubs--ystem(db_path=db_path)  # <-- Unser korrektes Gedächtnis mit 5 Einträgen
+
+    # 3. AGENT ERSTELLEN UND DANN DAS GEDÄCHTNIS ZUWEISEN (Die neue Logik)
+
+    # Zuerst den Agenten so erstellen, wie er es erwartet (ohne Gedächtnis-Argument).
+    # Er wird intern ein leeres Gedächtnis erstellen.
+    agent = CAPA_Agent(
+        pag_model=pag_model,
+        asc=asc
+    )
+
+    # JETZT überschreiben wir sein leeres Gedächtnis mit unserer
+    # Instanz, die die Daten aus der Datenbank geladen hat.
+    agent.memory = memory_system
+
+    # --- KORREKTUR ENDET HIER ---
     input_handler = InputHandler()
+
 
     print("Richte Echtzeit-Feedback-Hotkeys ein (+, -, *, /)...")
     keyboard.add_hotkey('+', lambda: (agent.asc.update_state(delta_y=10), print("\n[Feedback: +10y]")))
@@ -124,6 +151,13 @@ def main():
         print("\n\n--- SYSTEM WIRD HERUNTERGEFAHREN ---")
         keyboard.unhook_all()
         if agent.memory:
+            agent.memory.shutdown()
+        print("System erfolgreich heruntergefahren.")
+
+    finally:
+        # Dieser finally-Block stellt sicher, dass das Herunterfahren immer versucht wird.
+        keyboard.unhook_all()
+        if hasattr(agent, 'memory') and agent.memory is not None:
             agent.memory.shutdown()
         print("System erfolgreich heruntergefahren.")
 
