@@ -39,11 +39,11 @@ A small Python environment is sufficient.
    source .venv/bin/activate   # macOS / Linux
    .venv\Scripts\activate    # Windows
 
-2. Install dependencies (if requirements.txt exists):
+2. Install dependencies (this may not be up to date):
 
    pip install -r requirements.txt
 
-If there is no requirements.txt, install the basics for experimenting:
+If the requirements.txt is not up to date, install the basics for experimenting:
 
    pip install numpy networkx jupyter
 
