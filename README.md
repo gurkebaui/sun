@@ -93,8 +93,7 @@ When contributing, please open a small, focused pull request describing changes.
 
 ## License
 
-If you want to allow permissive reuse, add an MIT license file (MIT recommended). If no license exists, consider adding one before broad reuse.
-
+There is non... just use it responsivley. I trust yall!
 ## Contact
 
 Owner: @gurkebaui
