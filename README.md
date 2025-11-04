@@ -1,6 +1,6 @@
 # SUN — Simple Network for a Minimal Language Model
 
-SUN is a small proof-of-concept that explores building a minimal, interpretable language model by composing a network of information sources and influence factors. The aim is educational: to experiment with how small, inspectable components can be combined to produce language-like behavior, not to compete with large production models.
+SUN is a small proof-of-concept that explores building a minimal, interpretable language model by composing a network of information sources and influence factors. The aim is educational: to experiment with how small, inspectable components can be combined to produce language-like behavior, not to compete with large production models. This is build on the CAPA_v1 architecture (more on that in future readme, this one is ai i was very lazy i know)
 
 ## Concept
 
